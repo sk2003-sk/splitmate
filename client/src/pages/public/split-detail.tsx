@@ -823,16 +823,30 @@ export default function PublicSplitDetailPage() {
                         ) : null}
                       </span>
                     </div>
-                    <p className="mt-1 pl-8 text-[11px] leading-relaxed text-muted-foreground">
-                      {row.outgoing.length
-                        ? `To ${row.outgoing
-                            .map(
-                              (payment) =>
-                                `${payment.to.name} ${formatMoney(payment.amountPaise)}`,
-                            )
-                            .join(' · ')}`
-                        : 'Nothing to pay.'}
-                    </p>
+                    {row.outgoing.length ? (
+                      <div className="mt-2 rounded-md border border-primary/30 bg-primary/10 px-3 py-2">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-primary">
+                          Send to
+                        </p>
+                        <ul className="mt-1 space-y-0.5">
+                          {row.outgoing.map((payment) => (
+                            <li
+                              key={`${payment.from.key}-${payment.to.key}`}
+                              className="flex items-center justify-between gap-3 text-sm"
+                            >
+                              <span className="truncate font-medium text-foreground">
+                                {payment.to.name}
+                              </span>
+                              <span className="shrink-0 font-display font-semibold tabular-nums text-foreground">
+                                {formatMoney(payment.amountPaise)}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : (
+                      <p className="mt-2 pl-8 text-xs text-muted-foreground">Nothing to pay.</p>
+                    )}
                   </li>
                 ))}
               </ul>
