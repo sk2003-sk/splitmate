@@ -108,6 +108,7 @@ export default function LoginPage() {
 
         <form
           className="mt-7 space-y-4"
+          autoComplete="on"
           onSubmit={(event) => {
             event.preventDefault();
             setError('');
@@ -126,8 +127,13 @@ export default function LoginPage() {
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
+              name="email"
               type="email"
-              autoComplete="email"
+              inputMode="email"
+              autoComplete="username"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
               className="mt-1.5"
               placeholder="you@example.com"
               value={email}
@@ -139,6 +145,7 @@ export default function LoginPage() {
             <div className="relative mt-1.5">
               <Input
                 id="password"
+                name="password"
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"
                 className="pr-11"

@@ -72,6 +72,7 @@ export default function RegisterPage() {
 
         <form
           className="mt-7 space-y-4"
+          autoComplete="on"
           onSubmit={(event) => {
             event.preventDefault();
             setError('');
@@ -90,7 +91,9 @@ export default function RegisterPage() {
             <Label htmlFor="name">Full name</Label>
             <Input
               id="name"
+              name="name"
               autoComplete="name"
+              autoCapitalize="words"
               className="mt-1.5"
               placeholder="Sai Kumar"
               value={name}
@@ -101,8 +104,13 @@ export default function RegisterPage() {
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
+              name="email"
               type="email"
-              autoComplete="email"
+              inputMode="email"
+              autoComplete="username"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
               className="mt-1.5"
               placeholder="you@example.com"
               value={email}
@@ -114,6 +122,7 @@ export default function RegisterPage() {
             <div className="relative mt-1.5">
               <Input
                 id="password"
+                name="password"
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="new-password"
                 className="pr-11"
@@ -146,6 +155,7 @@ export default function RegisterPage() {
             <Label htmlFor="confirmPassword">Confirm password</Label>
             <Input
               id="confirmPassword"
+              name="confirmPassword"
               type="password"
               autoComplete="new-password"
               className="mt-1.5"
