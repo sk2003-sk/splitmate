@@ -194,11 +194,10 @@ export default function PublicSplitDetailPage() {
       <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
         <div className="h-4 w-28 animate-pulse rounded bg-card" />
         <div className="mt-6 h-14 w-2/3 animate-pulse rounded-lg bg-card" />
-        <div className="mt-8 grid gap-6 lg:grid-cols-2">
-          <div className="flex flex-col gap-6">
-            <div className="h-40 animate-pulse rounded-lg bg-card" />
-            <div className="h-72 animate-pulse rounded-lg bg-card" />
-          </div>
+        <div className="mt-8 space-y-6">
+          <div className="h-52 animate-pulse rounded-lg bg-card" />
+          <div className="h-64 animate-pulse rounded-lg bg-card" />
+          <div className="h-44 animate-pulse rounded-lg bg-card" />
           <div className="h-72 animate-pulse rounded-lg bg-card" />
         </div>
       </div>
@@ -339,7 +338,7 @@ export default function PublicSplitDetailPage() {
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(75%_120%_at_80%_-20%,rgba(229,9,20,0.34),transparent_65%)]"
       />
-      <div className="relative mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:flex lg:h-[calc(100svh-4rem)] lg:min-h-[36rem] lg:flex-col lg:pb-6">
+      <div className="relative mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
         <Link
           to="/splits"
           className="shrink-0 text-[13px] font-medium text-muted-foreground transition hover:text-foreground"
@@ -376,6 +375,9 @@ export default function PublicSplitDetailPage() {
             <Button onClick={shareLink}>
               <Copy className="h-4 w-4" /> Share link
             </Button>
+            <a href="#log-payment" className={buttonVariants({ variant: 'secondary' })}>
+              <Plus className="h-4 w-4" /> Add payment
+            </a>
             <Button
               variant="outline"
               onClick={() => {
@@ -397,13 +399,304 @@ export default function PublicSplitDetailPage() {
           </div>
         </div>
 
-        <div className="mt-8 grid gap-6 lg:min-h-0 lg:flex-1 lg:grid-cols-2">
-          <div className="flex flex-col gap-6 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-1 [&>*]:shrink-0 [scrollbar-gutter:stable]">
-            <section className="rounded-lg border border-border/70 bg-card/80 p-5">
+        <div className="mt-8 space-y-6">
+          <section className="overflow-hidden rounded-lg border border-primary/40 bg-[linear-gradient(160deg,rgba(229,9,20,0.2),rgba(20,20,20,0.05)_55%,transparent)] p-5 sm:p-6">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">
+                  Settle up
+                </p>
+                <h2 className="mt-1 font-display text-2xl font-semibold uppercase leading-tight">
+                  Who pays whom
+                </h2>
+                <p className="mt-2 max-w-2xl text-xs leading-relaxed text-muted-foreground">
+                  Each person pays back whoever actually paid for their share. Nothing is netted
+                  through someone else.
+                </p>
+              </div>
+              <p className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                {directPayments.length} transfers
+                {directPayments.length ? <> · {formatMoney(movingPaise)}</> : null}
+              </p>
+            </div>
+
+            {directPayments.length ? (
+              <ul className="mt-4 grid gap-1.5 sm:grid-cols-2 xl:grid-cols-3">
+                {directPayments.map((payment, index) => (
+                  <li
+                    key={`${payment.from.key}-${payment.to.key}-${index}`}
+                    className="flex items-center gap-2 rounded-md border border-border/70 bg-background/50 px-3 py-2.5 text-sm"
+                  >
+                    <span className="truncate font-medium">{payment.from.name}</span>
+                    <ArrowRight className="h-3.5 w-3.5 shrink-0 text-primary" />
+                    <span className="truncate font-medium">{payment.to.name}</span>
+                    <span className="ml-auto shrink-0 font-display font-semibold tabular-nums text-primary">
+                      {formatMoney(payment.amountPaise)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-3 rounded-md border border-dashed border-border/80 px-3 py-4 text-sm text-muted-foreground">
+                {summary.expenseCount
+                  ? 'All square — nobody owes anybody.'
+                  : 'Add a payment to see the settlement list.'}
+              </p>
+            )}
+
+            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+              SplitMate only does the maths — no money moves in the app.
+            </p>
+          </section>
+
+          <section className="rounded-lg border border-border/70 bg-card/80 p-5 sm:p-6">
+            <div className="grid gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start">
+              <div>
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wide">
+                  Everyone's total
+                </h2>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                  Paid is what each person put in. Should pay is their share of every bill. Net is
+                  paid minus should pay.
+                </p>
+                <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+                  Paid and should pay both add up to {formatMoney(summary.totalPaise)}, and net
+                  cancels to {formatMoney(0, { signed: true })}.
+                </p>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-[15px]">
+                  <thead>
+                    <tr className="text-left text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+                      <th className="pb-2.5 pr-2 font-semibold">Person</th>
+                      <th className="px-2 pb-2.5 text-right font-semibold">Paid</th>
+                      <th className="px-2 pb-2.5 text-right font-semibold">Should pay</th>
+                      <th className="pb-2.5 pl-2 text-right font-semibold">Net</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/50">
+                    {summary.balances.map((row) => (
+                      <tr key={row.person.key}>
+                        <td className="py-2.5 pr-2">
+                          <span className="flex min-w-0 items-center gap-2">
+                            <Avatar
+                              name={row.person.name}
+                              color={colorForName(row.person.name)}
+                              size="sm"
+                              className="h-6 w-6 text-[10px] ring-0"
+                            />
+                            <span className="truncate font-medium">{row.person.name}</span>
+                          </span>
+                        </td>
+                        <td className="px-2 py-2.5 text-right tabular-nums">
+                          {formatMoney(row.paidPaise)}
+                        </td>
+                        <td className="px-2 py-2.5 text-right tabular-nums">
+                          {formatMoney(row.sharePaise)}
+                        </td>
+                        <td
+                          className={cn(
+                            'py-2.5 pl-2 text-right font-semibold tabular-nums',
+                            row.netPaise > 0
+                              ? 'text-positive'
+                              : row.netPaise < 0
+                                ? 'text-negative'
+                                : 'text-muted-foreground',
+                          )}
+                        >
+                          {formatMoney(row.netPaise, { signed: true })}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="border-t border-border/70 text-xs font-semibold">
+                      <td className="pt-2.5 pr-2 uppercase tracking-[0.12em] text-muted-foreground">
+                        Total
+                      </td>
+                      <td className="px-2 pt-2.5 text-right tabular-nums">
+                        {formatMoney(summary.totalPaise)}
+                      </td>
+                      <td className="px-2 pt-2.5 text-right tabular-nums">
+                        {formatMoney(summary.totalPaise)}
+                      </td>
+                      <td className="pl-2 pt-2.5 text-right tabular-nums">
+                        {formatMoney(0, { signed: true })}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section className="rounded-lg border border-border/70 bg-card/80 p-5 sm:p-6">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wide">
+                  Total per person
+                </h2>
+                <p className="mt-1 max-w-2xl text-xs leading-relaxed text-muted-foreground">
+                  Everyone is listed. Pays is their total across all bills; receives is what others
+                  owe them.
+                </p>
+              </div>
+              <p className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                {formatMoney(movingPaise)} moving
+              </p>
+            </div>
+            <ul className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              {totalsByPerson.map((row) => (
+                <li
+                  key={row.person.key}
+                  className="rounded-lg border border-border/60 bg-background/30 p-3.5"
+                >
+                  <div className="flex items-start gap-2">
+                    <Avatar
+                      name={row.person.name}
+                      color={colorForName(row.person.name)}
+                      size="sm"
+                      className="mt-0.5 h-6 w-6 text-[10px] ring-0"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-[15px] font-medium">{row.person.name}</p>
+                      <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
+                        pays{' '}
+                        <span className="font-display text-sm font-semibold tabular-nums text-foreground">
+                          {formatMoney(row.payPaise)}
+                        </span>
+                        {row.receivePaise > 0 ? (
+                          <>
+                            {' '}
+                            · receives{' '}
+                            <span className="font-display text-sm font-semibold tabular-nums text-positive">
+                              {formatMoney(row.receivePaise)}
+                            </span>
+                          </>
+                        ) : null}
+                      </p>
+                    </div>
+                  </div>
+                  {row.outgoing.length ? (
+                    <div className="mt-2.5 rounded-md border border-primary/30 bg-primary/10 px-3 py-2">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-primary">
+                        Send to
+                      </p>
+                      <ul className="mt-1 space-y-1">
+                        {row.outgoing.map((payment) => (
+                          <li
+                            key={`${payment.from.key}-${payment.to.key}`}
+                            className="flex items-center justify-between gap-3 text-sm"
+                          >
+                            <span className="truncate font-medium text-foreground">
+                              {payment.to.name}
+                            </span>
+                            <span className="shrink-0 font-display font-semibold tabular-nums text-foreground">
+                              {formatMoney(payment.amountPaise)}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : (
+                    <p className="mt-2.5 text-xs text-muted-foreground">Nothing to pay.</p>
+                  )}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+              Money moving between people: {formatMoney(movingPaise)}. Each payer's own share stays
+              with them and is not a transfer.
+            </p>
+          </section>
+
+          <section className="overflow-hidden rounded-lg border border-border/70 bg-card/80">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 px-5 py-4">
+              <div>
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wide">
+                  The tab
+                </h2>
+                <p className="text-xs text-muted-foreground">
+                  {summary.expenseCount}{' '}
+                  {summary.expenseCount === 1 ? 'payment' : 'payments'} ·{' '}
+                  {formatMoney(summary.totalPaise)}
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  Newest first
+                </span>
+                <a
+                  href="#log-payment"
+                  className={buttonVariants({ size: 'sm', variant: 'secondary' })}
+                >
+                  <Plus className="h-4 w-4" /> Add
+                </a>
+              </div>
+            </div>
+
+            {split.expenses.length ? (
+              <ul className="divide-y divide-border/60">
+                {split.expenses.map((expense) => (
+                  <li
+                    key={expense._id}
+                    className="grid gap-3 px-5 py-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start"
+                  >
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
+                        <p className="text-[15px] font-medium">{expense.description}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {expense.payer?.name ?? 'Someone'} paid · {formatDate(expense.date)}
+                        </p>
+                      </div>
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                        Each person's share:{' '}
+                        {expense.splits
+                          .map(
+                            (part) =>
+                              `${part.person?.name ?? 'Someone'} ${formatMoney(part.amountPaise)}`,
+                          )
+                          .join(' · ')}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 sm:justify-end">
+                      <span className="font-display text-2xl font-semibold tabular-nums">
+                        {formatMoney(expense.amountPaise)}
+                      </span>
+                      <Button
+                        size="icon-sm"
+                        variant="ghost"
+                        aria-label={`Delete ${expense.description}`}
+                        className="text-muted-foreground hover:bg-destructive/15 hover:text-destructive"
+                        onClick={() => setExpenseToDelete(expense)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="px-5 py-8 text-sm text-muted-foreground">
+                No payments logged yet. Add the first bill below.
+              </p>
+            )}
+          </section>
+
+          <div className="space-y-6">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">
+                Manage this split
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                Add people or log another bill — everyone with the link sees the update immediately.
+              </p>
+            </div>
+            <section className="rounded-lg border border-border/70 bg-card/80 p-5 sm:p-6">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <Users className="h-4 w-4 text-primary" />
-                  <h2 className="font-display text-xl font-semibold uppercase tracking-wide">
+                  <h2 className="font-display text-2xl font-semibold uppercase tracking-wide">
                     The group
                   </h2>
                 </div>
@@ -437,7 +730,7 @@ export default function PublicSplitDetailPage() {
                 ))}
               </div>
 
-              <form onSubmit={submitPerson} className="mt-4 flex gap-2">
+              <form onSubmit={submitPerson} className="mt-4 flex max-w-md gap-2">
                 <Input
                   value={personDraft}
                   onChange={(event) => setPersonDraft(event.target.value)}
@@ -460,10 +753,13 @@ export default function PublicSplitDetailPage() {
               </form>
             </section>
 
-            <section className="rounded-lg border border-border/70 bg-card/80 p-5">
+            <section
+              id="log-payment"
+              className="scroll-mt-24 rounded-lg border border-border/70 bg-card/80 p-5 sm:p-6"
+            >
               <div className="flex items-center gap-2">
                 <Receipt className="h-4 w-4 text-primary" />
-                <h2 className="font-display text-xl font-semibold uppercase tracking-wide">
+                <h2 className="font-display text-2xl font-semibold uppercase tracking-wide">
                   Log a payment
                 </h2>
               </div>
@@ -478,7 +774,7 @@ export default function PublicSplitDetailPage() {
                 </p>
               ) : (
                 <form onSubmit={submitExpense} className="mt-4 space-y-4">
-                  <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_150px]">
+                  <div className="grid gap-4 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)]">
                     <div>
                       <Label htmlFor="expense-description">What was paid for?</Label>
                       <Input
@@ -503,9 +799,6 @@ export default function PublicSplitDetailPage() {
                         className="mt-1.5 tabular-nums"
                       />
                     </div>
-                  </div>
-
-                  <div className="grid gap-4 sm:grid-cols-2">
                     <div>
                       <Label htmlFor="expense-payer">Who paid?</Label>
                       <Select value={paidBy} onValueChange={setPaidBy}>
@@ -609,253 +902,8 @@ export default function PublicSplitDetailPage() {
               )}
             </section>
 
-            <section className="overflow-hidden rounded-lg border border-border/70 bg-card/80">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 px-5 py-4">
-                <div>
-                  <h2 className="font-display text-xl font-semibold uppercase tracking-wide">
-                    The tab
-                  </h2>
-                  <p className="text-xs text-muted-foreground">
-                    {summary.expenseCount}{' '}
-                    {summary.expenseCount === 1 ? 'payment' : 'payments'} ·{' '}
-                    {formatMoney(summary.totalPaise)}
-                  </p>
-                </div>
-                <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  Newest first
-                </span>
-              </div>
-
-              {split.expenses.length ? (
-                <ul className="divide-y divide-border/60">
-                  {split.expenses.map((expense) => (
-                    <li
-                      key={expense._id}
-                      className="flex flex-wrap items-start justify-between gap-3 px-5 py-4"
-                    >
-                      <div className="min-w-0">
-                        <p className="font-medium">{expense.description}</p>
-                        <p className="mt-0.5 text-[11px] text-muted-foreground">
-                          {expense.payer?.name ?? 'Someone'} paid · {formatDate(expense.date)}
-                        </p>
-                        <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-                          Each person's share:{' '}
-                          {expense.splits
-                            .map(
-                              (part) =>
-                                `${part.person?.name ?? 'Someone'} ${formatMoney(part.amountPaise)}`,
-                            )
-                            .join(' · ')}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-display text-xl font-semibold tabular-nums">
-                          {formatMoney(expense.amountPaise)}
-                        </span>
-                        <Button
-                          size="icon-sm"
-                          variant="ghost"
-                          aria-label={`Delete ${expense.description}`}
-                          className="text-muted-foreground hover:bg-destructive/15 hover:text-destructive"
-                          onClick={() => setExpenseToDelete(expense)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="px-5 py-8 text-sm text-muted-foreground">
-                  No payments logged yet. Add the first bill above.
-                </p>
-              )}
-            </section>
           </div>
 
-          <aside className="flex flex-col gap-4 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-1 [&>*]:shrink-0 [scrollbar-gutter:stable]">
-            <section className="overflow-hidden rounded-lg border border-primary/40 bg-[linear-gradient(160deg,rgba(229,9,20,0.2),rgba(20,20,20,0.05)_55%,transparent)] p-5">
-              <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">
-                Settle up
-              </p>
-              <h2 className="mt-1 font-display text-2xl font-semibold uppercase leading-tight">
-                Who pays whom
-              </h2>
-              <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-                Each person pays back whoever actually paid for their share. Nothing is netted
-                through someone else.
-              </p>
-
-              {directPayments.length ? (
-                <ul className="mt-4 space-y-1.5">
-                  {directPayments.map((payment, index) => (
-                    <li
-                      key={`${payment.from.key}-${payment.to.key}-${index}`}
-                      className="flex items-center gap-2 rounded-md border border-border/70 bg-background/50 px-3 py-2 text-sm"
-                    >
-                      <span className="truncate font-medium">{payment.from.name}</span>
-                      <ArrowRight className="h-3.5 w-3.5 shrink-0 text-primary" />
-                      <span className="truncate font-medium">{payment.to.name}</span>
-                      <span className="ml-auto shrink-0 font-display font-semibold tabular-nums text-primary">
-                        {formatMoney(payment.amountPaise)}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="mt-3 rounded-md border border-dashed border-border/80 px-3 py-4 text-sm text-muted-foreground">
-                  {summary.expenseCount
-                    ? 'All square — nobody owes anybody.'
-                    : 'Add a payment to see the settlement list.'}
-                </p>
-              )}
-
-              <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
-                SplitMate only does the maths — no money moves in the app.
-              </p>
-            </section>
-
-            <section className="rounded-lg border border-border/70 bg-card/80 p-5">
-              <h2 className="font-display text-xl font-semibold uppercase tracking-wide">
-                Everyone's total
-              </h2>
-              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-                Paid is what each person put in. Should pay is their share of every bill. Net is
-                paid minus should pay.
-              </p>
-              <div className="mt-3 overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-left text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
-                      <th className="pb-2 pr-2 font-semibold">Person</th>
-                      <th className="px-2 pb-2 text-right font-semibold">Paid</th>
-                      <th className="px-2 pb-2 text-right font-semibold">Should pay</th>
-                      <th className="pb-2 pl-2 text-right font-semibold">Net</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border/50">
-                    {summary.balances.map((row) => (
-                      <tr key={row.person.key}>
-                        <td className="py-2 pr-2">
-                          <span className="flex min-w-0 items-center gap-2">
-                            <Avatar
-                              name={row.person.name}
-                              color={colorForName(row.person.name)}
-                              size="sm"
-                              className="h-6 w-6 text-[10px] ring-0"
-                            />
-                            <span className="truncate font-medium">{row.person.name}</span>
-                          </span>
-                        </td>
-                        <td className="px-2 py-2 text-right tabular-nums">
-                          {formatMoney(row.paidPaise)}
-                        </td>
-                        <td className="px-2 py-2 text-right tabular-nums">
-                          {formatMoney(row.sharePaise)}
-                        </td>
-                        <td
-                          className={cn(
-                            'py-2 pl-2 text-right font-semibold tabular-nums',
-                            row.netPaise > 0
-                              ? 'text-positive'
-                              : row.netPaise < 0
-                                ? 'text-negative'
-                                : 'text-muted-foreground',
-                          )}
-                        >
-                          {formatMoney(row.netPaise, { signed: true })}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                  <tfoot>
-                    <tr className="border-t border-border/70 text-[11px] font-semibold">
-                      <td className="pt-2 pr-2 uppercase tracking-[0.12em] text-muted-foreground">
-                        Total
-                      </td>
-                      <td className="px-2 pt-2 text-right tabular-nums">
-                        {formatMoney(summary.totalPaise)}
-                      </td>
-                      <td className="px-2 pt-2 text-right tabular-nums">
-                        {formatMoney(summary.totalPaise)}
-                      </td>
-                      <td className="pl-2 pt-2 text-right tabular-nums">
-                        {formatMoney(0, { signed: true })}
-                      </td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-            </section>
-
-            <section className="rounded-lg border border-border/70 bg-card/80 p-5">
-              <h2 className="font-display text-xl font-semibold uppercase tracking-wide">
-                Total per person
-              </h2>
-              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-                Everyone is listed. Pays is their total across all bills; receives is what others
-                owe them.
-              </p>
-              <ul className="mt-3 divide-y divide-border/50">
-                {totalsByPerson.map((row) => (
-                  <li key={row.person.key} className="py-3">
-                    <div className="flex items-center gap-2">
-                      <Avatar
-                        name={row.person.name}
-                        color={colorForName(row.person.name)}
-                        size="sm"
-                        className="h-6 w-6 text-[10px] ring-0"
-                      />
-                      <span className="min-w-0 truncate font-medium">{row.person.name}</span>
-                      <span className="ml-auto shrink-0 text-right text-[11px] leading-tight text-muted-foreground">
-                        pays{' '}
-                        <span className="font-display text-sm font-semibold tabular-nums text-foreground">
-                          {formatMoney(row.payPaise)}
-                        </span>
-                        {row.receivePaise > 0 ? (
-                          <>
-                            {' '}
-                            · receives{' '}
-                            <span className="font-display text-sm font-semibold tabular-nums text-positive">
-                              {formatMoney(row.receivePaise)}
-                            </span>
-                          </>
-                        ) : null}
-                      </span>
-                    </div>
-                    {row.outgoing.length ? (
-                      <div className="mt-2 rounded-md border border-primary/30 bg-primary/10 px-3 py-2">
-                        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-primary">
-                          Send to
-                        </p>
-                        <ul className="mt-1 space-y-0.5">
-                          {row.outgoing.map((payment) => (
-                            <li
-                              key={`${payment.from.key}-${payment.to.key}`}
-                              className="flex items-center justify-between gap-3 text-sm"
-                            >
-                              <span className="truncate font-medium text-foreground">
-                                {payment.to.name}
-                              </span>
-                              <span className="shrink-0 font-display font-semibold tabular-nums text-foreground">
-                                {formatMoney(payment.amountPaise)}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ) : (
-                      <p className="mt-2 pl-8 text-xs text-muted-foreground">Nothing to pay.</p>
-                    )}
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
-                Money moving between people: {formatMoney(movingPaise)}. Each payer's own share
-                stays with them and is not a transfer.
-              </p>
-            </section>
-          </aside>
         </div>
       </div>
 
