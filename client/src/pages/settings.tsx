@@ -51,6 +51,7 @@ import { SkeletonRows } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/empty-state';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { CategoryIcon } from '@/components/category-icon';
+import { SmsSetupGuide } from '@/components/sms-setup-guide';
 import { useAuth } from '@/context/auth';
 import { useTheme, type Theme } from '@/context/theme';
 import { api, apiError } from '@/lib/api';
@@ -850,9 +851,9 @@ export default function SettingsPage() {
             <MessageSquare className="h-4 w-4 text-primary" /> Automatic capture from bank SMS
           </CardTitle>
           <CardDescription>
-            A web page can&apos;t read SMS, but an iPhone Shortcut can forward each bank alert to SplitMate
-            over HTTPS. The phone reads the message; this web app just receives and parses it. Android
-            users can use any SMS-forwarding app with the same endpoint.
+            A web page can&apos;t read SMS, but your phone can forward each bank alert to SplitMate.
+            Pick your phone below — every step shows a picture of the screen you should see. The phone
+            reads the message; this web app just receives and parses it.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -901,35 +902,7 @@ export default function SettingsPage() {
                 </div>
               )}
 
-              <div>
-                <p className="text-xs font-semibold">iPhone setup</p>
-                <ol className="mt-1 list-decimal space-y-1 pl-4 text-xs leading-relaxed text-muted-foreground">
-                  <li>
-                    Open <strong>Shortcuts → Automation → + → Message</strong>.
-                  </li>
-                  <li>
-                    Set the sender filter to your bank IDs, for example HDFCBK, HDFCBN, ICICIB, SBIINB,
-                    AXISBK.
-                  </li>
-                  <li>
-                    Choose <strong>Run Immediately</strong> so it does not ask for confirmation.
-                  </li>
-                  <li>
-                    Add <strong>Get text from Shortcut Input</strong>, then <strong>Get Contents of URL</strong>{' '}
-                    with URL <code className="break-all font-mono">{smsEndpoint}</code>, Method POST and
-                    header <code className="font-mono">Content-Type: application/json</code>.
-                  </li>
-                  <li>
-                    Set Request Body to JSON: <code className="font-mono">token</code> = your token,{' '}
-                    <code className="font-mono">text</code> = the text from step 4, and optionally{' '}
-                    <code className="font-mono">sender</code> = the sender.
-                  </li>
-                  <li>
-                    Save, then send or wait for a bank alert. It appears under Payments with an{' '}
-                    <strong>Auto · SMS</strong> badge.
-                  </li>
-                </ol>
-              </div>
+              <SmsSetupGuide endpoint={smsEndpoint} />
 
               <div className="flex flex-wrap items-center gap-2">
                 <Button variant="outline" size="sm" onClick={() => setRotateSmsOpen(true)}>
