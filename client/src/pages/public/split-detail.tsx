@@ -194,8 +194,8 @@ export default function PublicSplitDetailPage() {
       <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
         <div className="h-4 w-28 animate-pulse rounded bg-card" />
         <div className="mt-6 h-14 w-2/3 animate-pulse rounded-lg bg-card" />
-        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
-          <div className="space-y-6">
+        <div className="mt-8 grid gap-6 lg:grid-cols-2">
+          <div className="flex flex-col gap-6">
             <div className="h-40 animate-pulse rounded-lg bg-card" />
             <div className="h-72 animate-pulse rounded-lg bg-card" />
           </div>
@@ -397,8 +397,8 @@ export default function PublicSplitDetailPage() {
           </div>
         </div>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
-          <div className="space-y-6">
+        <div className="mt-8 grid gap-6 lg:grid-cols-2">
+          <div className="flex flex-col gap-6">
             <section className="rounded-lg border border-border/70 bg-card/80 p-5">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
@@ -609,7 +609,7 @@ export default function PublicSplitDetailPage() {
               )}
             </section>
 
-            <section className="overflow-hidden rounded-lg border border-border/70 bg-card/80">
+            <section className="flex-1 overflow-hidden rounded-lg border border-border/70 bg-card/80">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 px-5 py-4">
                 <div>
                   <h2 className="font-display text-xl font-semibold uppercase tracking-wide">
@@ -673,7 +673,7 @@ export default function PublicSplitDetailPage() {
             </section>
           </div>
 
-          <aside className="space-y-4 self-start lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:overscroll-contain lg:pb-4 lg:pr-1">
+          <aside className="flex flex-col gap-4">
             <section className="overflow-hidden rounded-lg border border-primary/40 bg-[linear-gradient(160deg,rgba(229,9,20,0.2),rgba(20,20,20,0.05)_55%,transparent)] p-5">
               <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">
                 Settle up
@@ -788,7 +788,7 @@ export default function PublicSplitDetailPage() {
               </div>
             </section>
 
-            <section className="rounded-lg border border-border/70 bg-card/80 p-5">
+            <section className="flex-1 rounded-lg border border-border/70 bg-card/80 p-5">
               <h2 className="font-display text-xl font-semibold uppercase tracking-wide">
                 Total per person
               </h2>
