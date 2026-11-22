@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: splitmate-api
+    runtime: node
+    plan: free
+    region: singapore
+    rootDir: server
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: ALLOW_DEMO_LOGIN
+        value: 'false'
+      - key: UPLOAD_DIR
+        value: uploads
+      - key: MONGODB_URI
+        sync: false
+      - key: CLIENT_URL
+        sync: false
+      - key: INBOUND_EMAIL_DOMAIN
+        sync: false
+      - key: INBOUND_EMAIL_SECRET
+        sync: false
