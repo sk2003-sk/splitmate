@@ -215,7 +215,7 @@ Production is two services plus a hosted database:
 | Piece | Host | Notes |
 | --- | --- | --- |
 | API | Render web service (`render.yaml`) | Node/Express, `/api/health` health check |
-| Client | Vercel static build (`vercel.json`) | Vite build from `client/`, SPA fallback |
+| Client | Vercel static build (`client/vercel.json`) | Vite build from `client/`, SPA fallback |
 | Database | MongoDB Atlas | Free M0 is enough to start |
 | Repo | GitHub | Render and Vercel both auto-deploy from `main` |
 
@@ -236,8 +236,8 @@ The service starts with `npm ci && npm start` inside `server/`. Render’s free 
 
 ### 3. Client (Vercel)
 
-1. Import the same repository in Vercel. The root `vercel.json` installs and builds `client/` and serves `client/dist`.
-2. Leave `VITE_API_URL` empty. Instead, proxy the API through Vercel so the browser sees one origin — the auth cookie is `httpOnly` + `sameSite=lax` and would otherwise be dropped cross-site. After Render gives you the API URL, add these rewrites to `vercel.json` above the SPA fallback:
+1. Import the same repository in Vercel and set the project **Root Directory** to `client`. `client/vercel.json` builds the Vite app into `dist`.
+2. Leave `VITE_API_URL` empty. Instead, proxy the API through Vercel so the browser sees one origin — the auth cookie is `httpOnly` + `sameSite=lax` and would otherwise be dropped cross-site. After Render gives you the API URL, add these rewrites to `client/vercel.json` above the SPA fallback:
 
 ```json
 "rewrites": [
