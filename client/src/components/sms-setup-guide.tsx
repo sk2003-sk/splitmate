@@ -122,85 +122,99 @@ const IOS_STEPS = (endpoint: string) => [
   {
     title: 'Open Automation',
     screenTitle: 'Shortcuts',
-    caption: 'Shortcuts → Automation',
+    caption: 'Automation → + → Message',
     body: (
       <>
-        In <strong>Shortcuts</strong>, open <strong>Automation</strong>, tap <strong>+</strong>, then choose{' '}
-        <strong>Message</strong>.
+        In <strong>Shortcuts</strong>, open the <strong>Automation</strong> tab, tap <strong>+</strong>,
+        then choose <strong>Message</strong>.
       </>
     ),
     screen: (
       <>
-        <Row highlight>
-          <span className="font-semibold text-zinc-100">Automation</span>
+        <Row>
+          <span className="font-semibold text-zinc-100">Shortcuts</span>
           <span className="ml-auto flex h-3 w-3 items-center justify-center rounded-full bg-primary text-[7px] font-bold text-primary-foreground">
             +
           </span>
         </Row>
-        <Muted>Personal Automation</Muted>
-        <Row>
-          <span className="text-[7px]">✉</span> Message
-          <Muted>When I receive a message</Muted>
+        <Muted>Automation</Muted>
+        <Row><span className="text-zinc-500">Bluetooth</span></Row>
+        <Row><span className="text-zinc-500">Time of Day</span></Row>
+        <Row highlight>
+          <span className="text-zinc-100">Message</span>
+          <span className="ml-auto text-[6px] text-zinc-400">When I receive a message</span>
         </Row>
-        <Row><Muted>Time of Day</Muted></Row>
-        <Row><Muted>Arrive</Muted></Row>
+        <Row><span className="text-zinc-500">Wi-Fi</span></Row>
       </>
     ),
   },
   {
-    title: 'Filter your bank',
+    title: 'Set the trigger',
     screenTitle: 'New Automation',
-    caption: 'Sender + Run Immediately',
+    caption: 'Any Sender · Message Contains',
     body: (
       <>
-        Add your bank sender IDs (<code className="font-mono">HDFCBK</code>,{' '}
-        <code className="font-mono">ICICIB</code>, <code className="font-mono">SBIINB</code>…), choose{' '}
-        <strong>Run Immediately</strong>, then tap <strong>Next</strong>.
+        Leave <strong>Sender</strong> on <strong>Any Sender</strong> — bank short codes like HDFCBK
+        can&apos;t be added there. In <strong>Message Contains</strong> type a word every bank alert has,
+        e.g. <code className="font-mono">debited</code>, <code className="font-mono">spent</code> or your
+        bank name. Pick <strong>Run Immediately</strong> (newer iOS: switch{' '}
+        <strong>Confirm Before Run</strong> off), then tap <strong>Next</strong>.
       </>
     ),
     screen: (
       <>
         <Muted>Message</Muted>
-        <Row highlight>
-          <span className="font-semibold text-zinc-100">Sender</span>
-          <span className="ml-auto rounded bg-zinc-800 px-1 font-mono text-[6px]">HDFCBK</span>
-          <span className="rounded bg-zinc-800 px-1 font-mono text-[6px]">ICICIB</span>
+        <Row>
+          <span className="text-zinc-100">Sender</span>
+          <span className="ml-auto text-zinc-300">Any Sender</span>
         </Row>
-        <Row><span className="text-zinc-100">Run Immediately</span><Toggle on /></Row>
-        <Row><span className="text-zinc-500">Run After Confirmation</span><Toggle /></Row>
+        <Row highlight>
+          <span className="font-semibold text-zinc-100">Message Contains</span>
+          <span className="ml-auto rounded bg-zinc-800 px-1 font-mono text-[6px]">debited</span>
+        </Row>
+        <Row>
+          <span className="text-zinc-100">Run Immediately</span>
+          <span className="ml-auto text-emerald-400">✓</span>
+        </Row>
+        <Row>
+          <span className="text-zinc-500">Run After Confirmation</span>
+          <span className="ml-auto text-zinc-600">○</span>
+        </Row>
         <PhoneButton>Next</PhoneButton>
       </>
     ),
   },
   {
-    title: 'Read the SMS text',
+    title: 'Grab the SMS text',
     screenTitle: 'New Automation',
-    caption: 'Get text from Shortcut Input',
+    caption: 'Get Text from Input',
     body: (
       <>
-        Add the action <strong>Get text from Shortcut Input</strong> so the alert text is available to
-        send.
+        Add the action <strong>Get Text from Input</strong> and set its <strong>Input</strong> to{' '}
+        <strong>Shortcut Input</strong>. That action now holds the bank message text.
       </>
     ),
     screen: (
       <>
         <Row><Muted>Search Actions</Muted></Row>
         <Row highlight>
-          <span className="font-semibold text-zinc-100">Get text from Shortcut Input</span>
+          <span className="font-semibold text-zinc-100">Get Text from Input</span>
+          <span className="ml-auto text-[6px] text-zinc-400">Input: Shortcut Input</span>
         </Row>
         <Row><Muted>Get Contents of URL</Muted></Row>
-        <Row><Muted>Post Notification</Muted></Row>
+        <Row><Muted>Show Notification</Muted></Row>
       </>
     ),
   },
   {
     title: 'Post to SplitMate',
     screenTitle: 'Get Contents of URL',
-    caption: 'Method POST + JSON header',
+    caption: 'POST + JSON header',
     body: (
       <>
-        Add <strong>Get Contents of URL</strong>, paste your endpoint, set Method <strong>POST</strong>{' '}
-        and header <code className="font-mono">Content-Type: application/json</code>.
+        Add <strong>Get Contents of URL</strong>, paste your endpoint, tap <strong>Show More</strong>, set{' '}
+        <strong>Method</strong> to <strong>POST</strong>, then add a header{' '}
+        <strong>Content-Type</strong> = <code className="font-mono">application/json</code>.
       </>
     ),
     screen: (
@@ -209,33 +223,42 @@ const IOS_STEPS = (endpoint: string) => [
           <span className="min-w-0 flex-1 truncate font-mono text-[6px] text-zinc-100">{endpoint}</span>
         </Row>
         <Row><span className="text-zinc-100">Method</span><span className="ml-auto font-mono">POST</span></Row>
+        <Row><span className="text-zinc-100">Headers</span></Row>
         <Row>
-          <span className="text-zinc-100">Headers</span>
-          <span className="ml-auto min-w-0 truncate font-mono text-[6px]">Content-Type: application/json</span>
+          <span className="font-mono text-[6px] text-zinc-400">Content-Type</span>
+          <span className="ml-auto font-mono text-[6px] text-zinc-200">application/json</span>
         </Row>
-        <Row><Muted>Request Body · Show More</Muted></Row>
+        <Row><Muted>Request Body: JSON</Muted></Row>
       </>
     ),
   },
   {
-    title: 'Send the body',
+    title: 'Build the body',
     screenTitle: 'Request Body',
-    caption: 'Request Body → JSON',
+    caption: 'JSON fields: token + text',
     body: (
       <>
-        Set Request Body to <strong>JSON</strong>: <code className="font-mono">token</code> = your token,{' '}
-        <code className="font-mono">text</code> = the text from step 3, and optionally{' '}
-        <code className="font-mono">sender</code>.
+        Choose <strong>JSON</strong> and add two fields: <code className="font-mono">token</code> = your
+        token, and <code className="font-mono">text</code> = tap the value and pick the{' '}
+        <strong>Text</strong> variable from Get Text from Input. A Message automation has no Sender
+        variable, so skip sender — SplitMate finds the bank and amount inside the message text.
       </>
     ),
     screen: (
       <>
-        <Row><span className="font-semibold text-zinc-100">Request Body</span><span className="ml-auto rounded bg-zinc-800 px-1 text-[6px]">JSON</span></Row>
-        <Code>{`{
-  "token": "your token",
-  "text": "Shortcut Input",
-  "sender": "Sender"
-}`}</Code>
+        <Row>
+          <span className="font-semibold text-zinc-100">Request Body</span>
+          <span className="ml-auto rounded bg-zinc-800 px-1 text-[6px]">JSON</span>
+        </Row>
+        <Row>
+          <span className="font-mono text-[6px] text-zinc-400">token</span>
+          <span className="ml-auto truncate font-mono text-[6px] text-zinc-200">your token</span>
+        </Row>
+        <Row highlight>
+          <span className="font-mono text-[6px] text-zinc-400">text</span>
+          <span className="ml-auto rounded bg-sky-500/20 px-1 font-mono text-[6px] text-sky-300">Text</span>
+        </Row>
+        <Row><Muted>+ Add new field</Muted></Row>
       </>
     ),
   },
