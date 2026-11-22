@@ -190,8 +190,9 @@ const IOS_STEPS = (endpoint: string) => [
     caption: 'Get Text from Input',
     body: (
       <>
-        Add the action <strong>Get Text from Input</strong> and set its <strong>Input</strong> to{' '}
-        <strong>Shortcut Input</strong>. That action now holds the bank message text.
+        In the automation editor tap <strong>Add Action</strong> (or the search bar) and search{' '}
+        <strong>Get Text from Input</strong>. Set its <strong>Input</strong> to{' '}
+        <strong>Shortcut Input</strong> — that now holds the bank message text.
       </>
     ),
     screen: (
@@ -207,23 +208,48 @@ const IOS_STEPS = (endpoint: string) => [
     ),
   },
   {
-    title: 'Post to SplitMate',
+    title: 'Paste the endpoint',
     screenTitle: 'Get Contents of URL',
-    caption: 'POST + JSON header',
+    caption: 'URL + Show More',
     body: (
       <>
-        Add <strong>Get Contents of URL</strong>, paste your endpoint, tap <strong>Show More</strong>, set{' '}
-        <strong>Method</strong> to <strong>POST</strong>, then add a header{' '}
-        <strong>Content-Type</strong> = <code className="font-mono">application/json</code>.
+        Add <strong>Get Contents of URL</strong> and paste your endpoint. At first you only see the URL
+        field and a <strong>Show More</strong> button — Method, Headers and Request Body stay hidden until
+        you open it.
+      </>
+    ),
+    screen: (
+      <>
+        <Row>
+          <span className="min-w-0 flex-1 truncate font-mono text-[6px] text-zinc-100">{endpoint}</span>
+        </Row>
+        <Row highlight>
+          <span className="font-semibold text-zinc-100">Show More</span>
+          <span className="ml-auto text-zinc-400">⌄</span>
+        </Row>
+        <Muted>Method · Headers · Body hidden</Muted>
+      </>
+    ),
+  },
+  {
+    title: 'Show Method + Headers',
+    screenTitle: 'Get Contents of URL',
+    caption: 'Show More → POST + header',
+    body: (
+      <>
+        Tap <strong>Show More</strong> (iPad/Mac: the action&apos;s arrow). Set <strong>Method</strong> to{' '}
+        <strong>POST</strong>, then tap <strong>Headers → Add new header</strong> and enter{' '}
+        <strong>Content-Type</strong> = <code className="font-mono">application/json</code>. If Headers
+        isn&apos;t there, the JSON body in the next step still sends it — POST is the one you must set.
       </>
     ),
     screen: (
       <>
         <Row highlight>
-          <span className="min-w-0 flex-1 truncate font-mono text-[6px] text-zinc-100">{endpoint}</span>
+          <span className="font-semibold text-zinc-100">Method</span>
+          <span className="ml-auto font-mono">POST</span>
         </Row>
-        <Row><span className="text-zinc-100">Method</span><span className="ml-auto font-mono">POST</span></Row>
-        <Row><span className="text-zinc-100">Headers</span></Row>
+        <Row><span className="text-zinc-100">Headers</span><span className="ml-auto text-zinc-400">Add new header</span></Row>
         <Row>
           <span className="font-mono text-[6px] text-zinc-400">Content-Type</span>
           <span className="ml-auto font-mono text-[6px] text-zinc-200">application/json</span>
@@ -238,10 +264,11 @@ const IOS_STEPS = (endpoint: string) => [
     caption: 'JSON fields: token + text',
     body: (
       <>
-        Choose <strong>JSON</strong> and add two fields: <code className="font-mono">token</code> = your
-        token, and <code className="font-mono">text</code> = tap the value and pick the{' '}
-        <strong>Text</strong> variable from Get Text from Input. A Message automation has no Sender
-        variable, so skip sender — SplitMate finds the bank and amount inside the message text.
+        Under <strong>Show More</strong>, choose <strong>Request Body → JSON</strong> and add two fields:{' '}
+        <code className="font-mono">token</code> = your token, and <code className="font-mono">text</code>{' '}
+        = tap the value and pick the <strong>Text</strong> variable from Get Text from Input. A Message
+        automation has no Sender variable, so skip sender — SplitMate finds the bank and amount inside the
+        message text.
       </>
     ),
     screen: (
@@ -427,6 +454,28 @@ export function SmsSetupGuide({ endpoint }: { endpoint: string }) {
           {IOS_STEPS(endpoint).map((step, index) => (
             <StepCard key={step.title} n={index + 1} {...step} />
           ))}
+        </div>
+        <div className="mt-3 rounded-xl border border-border/70 bg-muted/20 p-3">
+          <p className="text-xs font-semibold">Not seeing these fields?</p>
+          <ul className="mt-1 list-disc space-y-0.5 pl-4 text-[11px] leading-relaxed text-muted-foreground">
+            <li>
+              Only the URL and nothing else? Tap <strong>Show More</strong> underneath it — Method,
+              Headers and Request Body are collapsed by default. On iPad/Mac it is the arrow on the
+              action.
+            </li>
+            <li>
+              <strong>Headers</strong> missing? It lives inside Show More, next to Method. Tapping{' '}
+              <strong>Add new header</strong> creates the Header/Value pair.
+            </li>
+            <li>
+              Can&apos;t find the actions at all? In the automation editor tap <strong>Add Action</strong>,
+              then search for <strong>Get Text from Input</strong> and <strong>Get Contents of URL</strong>.
+            </li>
+            <li>
+              No <strong>Sender</strong> field to fill? Expected — a Message automation only passes the
+              text, and SplitMate reads the bank from the message.
+            </li>
+          </ul>
         </div>
       </TabsContent>
 
