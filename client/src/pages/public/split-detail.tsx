@@ -241,6 +241,18 @@ export default function PublicSplitDetailPage() {
       ? allocatePaise(amountPaise, selectedKeys.map(() => 1))
       : [];
 
+  const totalsByPerson = people.map((person) => {
+    const outgoing = directPayments.filter((payment) => payment.from.key === person.key);
+    const incoming = directPayments.filter((payment) => payment.to.key === person.key);
+    return {
+      person,
+      outgoing,
+      payPaise: outgoing.reduce((sum, payment) => sum + payment.amountPaise, 0),
+      receivePaise: incoming.reduce((sum, payment) => sum + payment.amountPaise, 0),
+    };
+  });
+  const movingPaise = totalsByPerson.reduce((sum, row) => sum + row.payPaise, 0);
+
   const toggleParticipant = (key: string) => {
     setParticipantKeys((current) =>
       current.includes(key) ? current.filter((entry) => entry !== key) : [...current, key],
@@ -752,6 +764,60 @@ export default function PublicSplitDetailPage() {
                   </tfoot>
                 </table>
               </div>
+            </section>
+
+            <section className="rounded-lg border border-border/70 bg-card/80 p-5">
+              <h2 className="font-display text-xl font-semibold uppercase tracking-wide">
+                Total per person
+              </h2>
+              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                Everyone is listed. Pays is their total across all bills; receives is what others
+                owe them.
+              </p>
+              <ul className="mt-3 divide-y divide-border/50">
+                {totalsByPerson.map((row) => (
+                  <li key={row.person.key} className="py-3">
+                    <div className="flex items-center gap-2">
+                      <Avatar
+                        name={row.person.name}
+                        color={colorForName(row.person.name)}
+                        size="sm"
+                        className="h-6 w-6 text-[10px] ring-0"
+                      />
+                      <span className="min-w-0 truncate font-medium">{row.person.name}</span>
+                      <span className="ml-auto shrink-0 text-right text-[11px] leading-tight text-muted-foreground">
+                        pays{' '}
+                        <span className="font-display text-sm font-semibold tabular-nums text-foreground">
+                          {formatMoney(row.payPaise)}
+                        </span>
+                        {row.receivePaise > 0 ? (
+                          <>
+                            {' '}
+                            · receives{' '}
+                            <span className="font-display text-sm font-semibold tabular-nums text-positive">
+                              {formatMoney(row.receivePaise)}
+                            </span>
+                          </>
+                        ) : null}
+                      </span>
+                    </div>
+                    <p className="mt-1 pl-8 text-[11px] leading-relaxed text-muted-foreground">
+                      {row.outgoing.length
+                        ? `To ${row.outgoing
+                            .map(
+                              (payment) =>
+                                `${payment.to.name} ${formatMoney(payment.amountPaise)}`,
+                            )
+                            .join(' · ')}`
+                        : 'Nothing to pay.'}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+                Money moving between people: {formatMoney(movingPaise)}. Each payer's own share
+                stays with them and is not a transfer.
+              </p>
             </section>
           </aside>
         </div>
