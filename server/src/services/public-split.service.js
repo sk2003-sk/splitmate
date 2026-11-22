@@ -29,6 +29,7 @@ export function summarizePublicSplit(split) {
   const netPaise = new Map(people.map((person) => [person.key, 0]));
   const paidPaise = new Map(people.map((person) => [person.key, 0]));
   const sharePaise = new Map(people.map((person) => [person.key, 0]));
+  const directMap = new Map();
 
   const expenses = [...(plain.expenses || [])]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
@@ -46,6 +47,11 @@ export function summarizePublicSplit(split) {
       keys.forEach((key, index) => {
         netPaise.set(key, netPaise.get(key) - shares[index]);
         sharePaise.set(key, sharePaise.get(key) + shares[index]);
+        if (key === payerKey) return;
+        const directKey = `${key}:${payerKey}`;
+        const direct = directMap.get(directKey);
+        if (direct) direct.amountPaise += shares[index];
+        else directMap.set(directKey, { fromKey: key, toKey: payerKey, amountPaise: shares[index] });
       });
 
       return {
@@ -99,6 +105,19 @@ export function summarizePublicSplit(split) {
     if (creditor.amountPaise === 0) creditorIndex += 1;
   }
 
+  const directPayments = [...directMap.values()]
+    .filter((row) => row.amountPaise > 0)
+    .map((row) => ({
+      from: peopleByKey.get(row.fromKey) || null,
+      to: peopleByKey.get(row.toKey) || null,
+      amountPaise: row.amountPaise,
+    }))
+    .sort(
+      (a, b) =>
+        b.amountPaise - a.amountPaise ||
+        String(a.from?.name || '').localeCompare(String(b.from?.name || '')),
+    );
+
   return {
     split: {
       code: plain.code,
@@ -113,6 +132,7 @@ export function summarizePublicSplit(split) {
       expenseCount: expenses.length,
       peopleCount: people.length,
       balances,
+      directPayments,
       transfers,
     },
   };

@@ -64,6 +64,7 @@ export default function PublicSplitDetailPage() {
   const payload = splitQuery.data;
   const split = payload?.split;
   const summary = payload?.summary;
+  const directPayments = summary?.directPayments ?? [];
 
   const [paidBy, setPaidBy] = useState('');
   const [participantKeys, setParticipantKeys] = useState<string[]>([]);
@@ -191,7 +192,7 @@ export default function PublicSplitDetailPage() {
       <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
         <div className="h-4 w-28 animate-pulse rounded bg-card" />
         <div className="mt-6 h-14 w-2/3 animate-pulse rounded-lg bg-card" />
-        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
           <div className="space-y-6">
             <div className="h-40 animate-pulse rounded-lg bg-card" />
             <div className="h-72 animate-pulse rounded-lg bg-card" />
@@ -362,7 +363,7 @@ export default function PublicSplitDetailPage() {
           </div>
         </div>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
           <div className="space-y-6">
             <section className="rounded-lg border border-border/70 bg-card/80 p-5">
               <div className="flex flex-wrap items-center justify-between gap-2">
@@ -604,7 +605,7 @@ export default function PublicSplitDetailPage() {
                           {expense.payer?.name ?? 'Someone'} paid · {formatDate(expense.date)}
                         </p>
                         <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-                          Split between{' '}
+                          Each person's share:{' '}
                           {expense.splits
                             .map(
                               (part) =>
@@ -646,22 +647,24 @@ export default function PublicSplitDetailPage() {
               <h2 className="mt-1 font-display text-2xl font-semibold uppercase leading-tight">
                 Who pays whom
               </h2>
+              <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+                Each person pays back whoever actually paid for their share. Nothing is netted
+                through someone else.
+              </p>
 
-              {summary.transfers.length ? (
-                <ul className="mt-4 space-y-2">
-                  {summary.transfers.map((transfer, index) => (
+              {directPayments.length ? (
+                <ul className="mt-4 space-y-1.5">
+                  {directPayments.map((payment, index) => (
                     <li
-                      key={`${transfer.from.key}-${transfer.to.key}-${index}`}
-                      className="rounded-md border border-border/70 bg-background/50 p-3"
+                      key={`${payment.from.key}-${payment.to.key}-${index}`}
+                      className="flex items-center gap-2 rounded-md border border-border/70 bg-background/50 px-3 py-2 text-sm"
                     >
-                      <div className="flex items-center justify-between gap-2 text-sm">
-                        <span className="truncate font-medium">{transfer.from.name}</span>
-                        <ArrowRight className="h-4 w-4 shrink-0 text-primary" />
-                        <span className="truncate font-medium">{transfer.to.name}</span>
-                      </div>
-                      <p className="mt-1 text-right font-display text-2xl font-semibold tabular-nums text-primary">
-                        {formatMoney(transfer.amountPaise)}
-                      </p>
+                      <span className="truncate font-medium">{payment.from.name}</span>
+                      <ArrowRight className="h-3.5 w-3.5 shrink-0 text-primary" />
+                      <span className="truncate font-medium">{payment.to.name}</span>
+                      <span className="ml-auto shrink-0 font-display font-semibold tabular-nums text-primary">
+                        {formatMoney(payment.amountPaise)}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -674,45 +677,81 @@ export default function PublicSplitDetailPage() {
               )}
 
               <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
-                Fewest possible transfers. SplitMate only does the maths — no money moves in the
-                app.
+                SplitMate only does the maths — no money moves in the app.
               </p>
             </section>
 
             <section className="rounded-lg border border-border/70 bg-card/80 p-5">
               <h2 className="font-display text-xl font-semibold uppercase tracking-wide">
-                Net balances
+                Everyone's total
               </h2>
-              <ul className="mt-3 space-y-3">
-                {summary.balances.map((row) => (
-                  <li key={row.person.key} className="flex items-center gap-3">
-                    <Avatar
-                      name={row.person.name}
-                      color={colorForName(row.person.name)}
-                      size="sm"
-                      className="ring-0"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium">{row.person.name}</p>
-                      <p className="text-[11px] text-muted-foreground">
-                        paid {formatMoney(row.paidPaise)} · share {formatMoney(row.sharePaise)}
-                      </p>
-                    </div>
-                    <span
-                      className={cn(
-                        'font-display text-lg font-semibold tabular-nums',
-                        row.netPaise > 0
-                          ? 'text-positive'
-                          : row.netPaise < 0
-                            ? 'text-negative'
-                            : 'text-muted-foreground',
-                      )}
-                    >
-                      {formatMoney(row.netPaise, { signed: true })}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                Paid is what each person put in. Should pay is their share of every bill. Net is
+                paid minus should pay.
+              </p>
+              <div className="mt-3 overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+                      <th className="pb-2 pr-2 font-semibold">Person</th>
+                      <th className="px-2 pb-2 text-right font-semibold">Paid</th>
+                      <th className="px-2 pb-2 text-right font-semibold">Should pay</th>
+                      <th className="pb-2 pl-2 text-right font-semibold">Net</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/50">
+                    {summary.balances.map((row) => (
+                      <tr key={row.person.key}>
+                        <td className="py-2 pr-2">
+                          <span className="flex min-w-0 items-center gap-2">
+                            <Avatar
+                              name={row.person.name}
+                              color={colorForName(row.person.name)}
+                              size="sm"
+                              className="h-6 w-6 text-[10px] ring-0"
+                            />
+                            <span className="truncate font-medium">{row.person.name}</span>
+                          </span>
+                        </td>
+                        <td className="px-2 py-2 text-right tabular-nums">
+                          {formatMoney(row.paidPaise)}
+                        </td>
+                        <td className="px-2 py-2 text-right tabular-nums">
+                          {formatMoney(row.sharePaise)}
+                        </td>
+                        <td
+                          className={cn(
+                            'py-2 pl-2 text-right font-semibold tabular-nums',
+                            row.netPaise > 0
+                              ? 'text-positive'
+                              : row.netPaise < 0
+                                ? 'text-negative'
+                                : 'text-muted-foreground',
+                          )}
+                        >
+                          {formatMoney(row.netPaise, { signed: true })}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="border-t border-border/70 text-[11px] font-semibold">
+                      <td className="pt-2 pr-2 uppercase tracking-[0.12em] text-muted-foreground">
+                        Total
+                      </td>
+                      <td className="px-2 pt-2 text-right tabular-nums">
+                        {formatMoney(summary.totalPaise)}
+                      </td>
+                      <td className="px-2 pt-2 text-right tabular-nums">
+                        {formatMoney(summary.totalPaise)}
+                      </td>
+                      <td className="pl-2 pt-2 text-right tabular-nums">
+                        {formatMoney(0, { signed: true })}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
             </section>
           </aside>
         </div>

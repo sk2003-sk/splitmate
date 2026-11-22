@@ -354,6 +354,7 @@ export interface PublicSplitSummary {
   expenseCount: number;
   peopleCount: number;
   balances: PublicBalanceRow[];
+  directPayments: PublicTransfer[];
   transfers: PublicTransfer[];
 }
 
