@@ -259,33 +259,64 @@ const IOS_STEPS = (endpoint: string) => [
     ),
   },
   {
-    title: 'Build the body',
+    title: 'Choose the JSON body',
     screenTitle: 'Request Body',
-    caption: 'JSON fields: token + text',
+    caption: 'Request Body → JSON',
     body: (
       <>
-        Under <strong>Show More</strong>, choose <strong>Request Body → JSON</strong> and add two fields:{' '}
-        <code className="font-mono">token</code> = your token, and <code className="font-mono">text</code>{' '}
-        = tap the value and pick the <strong>Text</strong> variable from Get Text from Input. A Message
-        automation has no Sender variable, so skip sender — SplitMate finds the bank and amount inside the
-        message text.
+        Under <strong>Show More</strong>, tap <strong>Request Body</strong> and choose{' '}
+        <strong>JSON</strong>. The action now shows a small table with <strong>Key</strong> and{' '}
+        <strong>Value</strong> columns and an <strong>Add new field</strong> row.
       </>
     ),
     screen: (
       <>
         <Row>
           <span className="font-semibold text-zinc-100">Request Body</span>
-          <span className="ml-auto rounded bg-zinc-800 px-1 text-[6px]">JSON</span>
+          <span className="ml-auto rounded bg-zinc-800 px-1 text-[6px] text-zinc-200">JSON</span>
         </Row>
         <Row>
+          <span className="text-[6px] text-zinc-500">Key</span>
+          <span className="ml-auto text-[6px] text-zinc-500">Value</span>
+        </Row>
+        <Row>
+          <span className="text-[6px] text-zinc-600">Key</span>
+          <span className="ml-auto text-[6px] text-zinc-600">Value</span>
+        </Row>
+        <Row highlight>
+          <span className="text-zinc-100">+ Add new field</span>
+        </Row>
+      </>
+    ),
+  },
+  {
+    title: 'Add token + text',
+    screenTitle: 'Request Body',
+    caption: 'Key / Value + Text variable',
+    body: (
+      <>
+        Tap <strong>Add new field</strong>: Key = <code className="font-mono">token</code>, Value = paste
+        the long token from the box above (if you lost it, rotate the token first). Add another field: Key
+        = <code className="font-mono">text</code>, tap its Value, then in the bar above the keyboard choose{' '}
+        <strong>Select Variable → Get Text from Input</strong> (the <strong>Text</strong> chip). Don&apos;t
+        add a sender field.
+      </>
+    ),
+    screen: (
+      <>
+        <Row><span className="font-semibold text-zinc-100">Request Body</span><span className="ml-auto rounded bg-zinc-800 px-1 text-[6px] text-zinc-200">JSON</span></Row>
+        <Row>
           <span className="font-mono text-[6px] text-zinc-400">token</span>
-          <span className="ml-auto truncate font-mono text-[6px] text-zinc-200">your token</span>
+          <span className="ml-auto truncate font-mono text-[6px] text-zinc-200">paste your token</span>
         </Row>
         <Row highlight>
           <span className="font-mono text-[6px] text-zinc-400">text</span>
           <span className="ml-auto rounded bg-sky-500/20 px-1 font-mono text-[6px] text-sky-300">Text</span>
         </Row>
-        <Row><Muted>+ Add new field</Muted></Row>
+        <Row>
+          <Muted>Select Variable</Muted>
+          <span className="ml-auto text-[6px] text-sky-300">Get Text from Input</span>
+        </Row>
       </>
     ),
   },
@@ -474,6 +505,10 @@ export function SmsSetupGuide({ endpoint }: { endpoint: string }) {
             <li>
               No <strong>Sender</strong> field to fill? Expected — a Message automation only passes the
               text, and SplitMate reads the bank from the message.
+            </li>
+            <li>
+              Token box empty? A token is only displayed once — use <strong>Rotate token</strong> above,
+              copy the new one, and update the Shortcut value.
             </li>
           </ul>
         </div>
