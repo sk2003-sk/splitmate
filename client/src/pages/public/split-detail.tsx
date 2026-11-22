@@ -450,7 +450,7 @@ export default function PublicSplitDetailPage() {
           </section>
 
           <section className="rounded-lg border border-border/70 bg-card/80 p-5 sm:p-6">
-            <div className="grid gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start">
+            <div className="grid gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-center">
               <div>
                 <h2 className="font-display text-2xl font-semibold uppercase tracking-wide">
                   Everyone's total
