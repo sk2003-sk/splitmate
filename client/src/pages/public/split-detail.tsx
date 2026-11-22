@@ -339,15 +339,15 @@ export default function PublicSplitDetailPage() {
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(75%_120%_at_80%_-20%,rgba(229,9,20,0.34),transparent_65%)]"
       />
-      <div className="relative mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
+      <div className="relative mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:flex lg:h-[calc(100svh-4rem)] lg:min-h-[36rem] lg:flex-col lg:pb-6">
         <Link
           to="/splits"
-          className="text-[13px] font-medium text-muted-foreground transition hover:text-foreground"
+          className="shrink-0 text-[13px] font-medium text-muted-foreground transition hover:text-foreground"
         >
           ← All splits
         </Link>
 
-        <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="mt-6 flex shrink-0 flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="min-w-0">
             <p className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-[0.3em] text-primary">
               Public split
@@ -397,8 +397,8 @@ export default function PublicSplitDetailPage() {
           </div>
         </div>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-2">
-          <div className="flex flex-col gap-6">
+        <div className="mt-8 grid gap-6 lg:min-h-0 lg:flex-1 lg:grid-cols-2">
+          <div className="flex flex-col gap-6 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-1 [scrollbar-gutter:stable]">
             <section className="rounded-lg border border-border/70 bg-card/80 p-5">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
@@ -609,7 +609,7 @@ export default function PublicSplitDetailPage() {
               )}
             </section>
 
-            <section className="flex-1 overflow-hidden rounded-lg border border-border/70 bg-card/80">
+            <section className="overflow-hidden rounded-lg border border-border/70 bg-card/80">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 px-5 py-4">
                 <div>
                   <h2 className="font-display text-xl font-semibold uppercase tracking-wide">
@@ -673,7 +673,7 @@ export default function PublicSplitDetailPage() {
             </section>
           </div>
 
-          <aside className="flex flex-col gap-4">
+          <aside className="flex flex-col gap-4 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-1 [scrollbar-gutter:stable]">
             <section className="overflow-hidden rounded-lg border border-primary/40 bg-[linear-gradient(160deg,rgba(229,9,20,0.2),rgba(20,20,20,0.05)_55%,transparent)] p-5">
               <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">
                 Settle up
@@ -788,7 +788,7 @@ export default function PublicSplitDetailPage() {
               </div>
             </section>
 
-            <section className="flex-1 rounded-lg border border-border/70 bg-card/80 p-5">
+            <section className="rounded-lg border border-border/70 bg-card/80 p-5">
               <h2 className="font-display text-xl font-semibold uppercase tracking-wide">
                 Total per person
               </h2>
