@@ -14,16 +14,28 @@ export function publicSplitUrl(code: string) {
 
 export async function copyText(value: string) {
   if (navigator.clipboard?.writeText) {
-    await navigator.clipboard.writeText(value);
-    return;
+    try {
+      await navigator.clipboard.writeText(value);
+      return;
+    } catch {
+      // In-app browsers can expose the Clipboard API and still reject the write.
+    }
   }
+
   const field = document.createElement('textarea');
   field.value = value;
   field.setAttribute('readonly', '');
   field.style.position = 'fixed';
+  field.style.top = '0';
+  field.style.left = '0';
   field.style.opacity = '0';
   document.body.appendChild(field);
-  field.select();
-  document.execCommand('copy');
-  field.remove();
+  try {
+    field.focus();
+    field.select();
+    field.setSelectionRange(0, value.length);
+    if (!document.execCommand('copy')) throw new Error('Copy was rejected');
+  } finally {
+    field.remove();
+  }
 }

@@ -78,6 +78,8 @@ export default function PublicSplitDetailPage() {
   const [personToRemove, setPersonToRemove] = useState<PublicPerson | null>(null);
   const [expenseToDelete, setExpenseToDelete] = useState<PublicSplitExpense | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
   const initializedCode = useRef<string | null>(null);
 
   const applyPayload = (data: PublicSplitPayload) => {
@@ -302,13 +304,33 @@ export default function PublicSplitDetailPage() {
     });
   };
 
-  const shareLink = async () => {
-    try {
-      await copyText(publicSplitUrl(split.code));
-      toast.success('Link copied — send it to the group');
-    } catch {
-      toast.error('Could not copy the link. Copy it from the address bar instead.');
+  const nativeShare = (
+    navigator as Navigator & {
+      share?: (data: { title?: string; url?: string }) => Promise<void>;
     }
+  ).share;
+
+  const shareLink = async () => {
+    const url = publicSplitUrl(split.code);
+    try {
+      await copyText(url);
+      toast.success('Link copied — send it to the group');
+      return;
+    } catch {
+      // Fall through to the native share sheet or the manual copy dialog.
+    }
+
+    if (nativeShare) {
+      try {
+        await nativeShare.call(navigator, { title: split.title, url });
+        return;
+      } catch (error) {
+        if ((error as Error)?.name === 'AbortError') return;
+      }
+    }
+
+    setShareUrl(url);
+    setShareOpen(true);
   };
 
   return (
@@ -892,6 +914,51 @@ export default function PublicSplitDetailPage() {
           await deleteSplitMutation.mutateAsync();
         }}
       />
+
+      <Dialog open={shareOpen} onOpenChange={setShareOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Send this split link</DialogTitle>
+            <DialogDescription>
+              This browser blocked automatic copying. Select the link below and copy it, or share
+              it straight to WhatsApp.
+            </DialogDescription>
+          </DialogHeader>
+          <Input
+            readOnly
+            value={shareUrl}
+            aria-label="Split link"
+            onFocus={(event) => event.currentTarget.select()}
+            onClick={(event) => event.currentTarget.select()}
+          />
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setShareOpen(false)}>
+              Close
+            </Button>
+            <a
+              className={buttonVariants({ variant: 'secondary' })}
+              href={`https://wa.me/?text=${encodeURIComponent(`${split.title} — ${shareUrl}`)}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              WhatsApp
+            </a>
+            <Button
+              onClick={async () => {
+                try {
+                  await copyText(shareUrl);
+                  toast.success('Link copied');
+                  setShareOpen(false);
+                } catch {
+                  toast.error('Press and hold the link to copy it.');
+                }
+              }}
+            >
+              Try copy again
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
