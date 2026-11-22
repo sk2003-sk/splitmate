@@ -398,7 +398,7 @@ export default function PublicSplitDetailPage() {
         </div>
 
         <div className="mt-8 grid gap-6 lg:min-h-0 lg:flex-1 lg:grid-cols-2">
-          <div className="flex flex-col gap-6 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-1 [scrollbar-gutter:stable]">
+          <div className="flex flex-col gap-6 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-1 [&>*]:shrink-0 [scrollbar-gutter:stable]">
             <section className="rounded-lg border border-border/70 bg-card/80 p-5">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
@@ -673,7 +673,7 @@ export default function PublicSplitDetailPage() {
             </section>
           </div>
 
-          <aside className="flex flex-col gap-4 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-1 [scrollbar-gutter:stable]">
+          <aside className="flex flex-col gap-4 lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-1 [&>*]:shrink-0 [scrollbar-gutter:stable]">
             <section className="overflow-hidden rounded-lg border border-primary/40 bg-[linear-gradient(160deg,rgba(229,9,20,0.2),rgba(20,20,20,0.05)_55%,transparent)] p-5">
               <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">
                 Settle up
