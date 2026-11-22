@@ -673,7 +673,7 @@ export default function PublicSplitDetailPage() {
             </section>
           </div>
 
-          <aside className="space-y-4 self-start lg:sticky lg:top-24">
+          <aside className="space-y-4 self-start lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:overscroll-contain lg:pb-4 lg:pr-1">
             <section className="overflow-hidden rounded-lg border border-primary/40 bg-[linear-gradient(160deg,rgba(229,9,20,0.2),rgba(20,20,20,0.05)_55%,transparent)] p-5">
               <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary">
                 Settle up
