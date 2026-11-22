@@ -945,17 +945,26 @@ export default function PublicSplitDetailPage() {
             onFocus={(event) => event.currentTarget.select()}
             onClick={(event) => event.currentTarget.select()}
           />
+          <p className="text-[11px] leading-relaxed text-muted-foreground">
+            The app didn't open?{' '}
+            <a
+              className="font-semibold text-primary underline-offset-4 hover:underline"
+              href={`https://wa.me/?text=${encodeURIComponent(`${split.title} — ${shareUrl}`)}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Use WhatsApp Web
+            </a>
+          </p>
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setShareOpen(false)}>
               Close
             </Button>
             <a
               className={buttonVariants({ variant: 'secondary' })}
-              href={`https://wa.me/?text=${encodeURIComponent(`${split.title} — ${shareUrl}`)}`}
-              target="_blank"
-              rel="noreferrer"
+              href={`whatsapp://send?text=${encodeURIComponent(`${split.title} — ${shareUrl}`)}`}
             >
-              WhatsApp
+              Open WhatsApp
             </a>
             <Button
               onClick={async () => {
