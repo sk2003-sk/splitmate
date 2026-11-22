@@ -291,6 +291,15 @@ export default function SettingsPage() {
 
   const smsEndpoint = `${api.defaults.baseURL || window.location.origin}/api/inbound/sms`;
 
+  const copyEndpoint = async () => {
+    try {
+      await navigator.clipboard.writeText(smsEndpoint);
+      toast.success('Endpoint URL copied');
+    } catch {
+      toast.error('Could not copy — select the URL and copy it manually');
+    }
+  };
+
   const saveProfile = async () => {
     if (!user) return;
     try {
@@ -901,6 +910,23 @@ export default function SettingsPage() {
                   </Button>
                 </div>
               )}
+
+              <div className="rounded-xl border border-primary/30 bg-primary/[0.06] p-3">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div>
+                    <p className="text-xs font-semibold">URL to paste into Get Contents of URL</p>
+                    <p className="mt-0.5 text-[11px] text-muted-foreground">
+                      Use this exact link in the action&apos;s URL field. Method must be POST.
+                    </p>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={copyEndpoint}>
+                    <Copy className="h-3.5 w-3.5" /> Copy URL
+                  </Button>
+                </div>
+                <code className="mt-2 block break-all rounded-lg bg-background/60 px-2.5 py-2 font-mono text-xs">
+                  {smsEndpoint}
+                </code>
+              </div>
 
               <SmsSetupGuide endpoint={smsEndpoint} />
 
