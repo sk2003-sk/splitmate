@@ -15,6 +15,12 @@ const authLimiter = rateLimit({
   limit: 40,
   standardHeaders: true,
   legacyHeaders: false,
+  // Behind the Vercel proxy every visitor shares the proxy IP, so a per-IP
+  // bucket locks out everyone. Key by account instead.
+  keyGenerator: (req) => {
+    const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+    return email ? `account:${email}` : `ip:${req.ip}`;
+  },
   message: { message: 'Too many authentication attempts. Please try again in a few minutes.' },
 });
 
