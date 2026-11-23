@@ -933,12 +933,13 @@ export default function SettingsPage() {
                 <div>
                   <p className="text-sm font-semibold">One-tap iPhone shortcut</p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
-                    Download the ready-made Shortcut instead of adding the actions by hand. Paste your
-                    token at the import prompt, then attach it to a Message automation.
+                    Download the ready-made Shortcut instead of adding the actions by hand. After
+                    importing, open it and replace the token placeholder in Get Contents of URL, then
+                    attach it to a Message automation.
                   </p>
                 </div>
                 <a
-                  href="/shortcuts/splitmate-bank-sms.shortcut"
+                  href="/shortcuts/splitmate-bank-sms-v2.shortcut"
                   download="SplitMate-Bank-SMS.shortcut"
                   className={cn(buttonVariants({ size: 'sm' }), 'shrink-0')}
                 >
