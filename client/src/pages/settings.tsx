@@ -940,7 +940,7 @@ export default function SettingsPage() {
                 </div>
                 <a
                   href="/shortcuts/splitmate-bank-sms-v2.shortcut"
-                  download="SplitMate-Bank-SMS.shortcut"
+                  download="SplitMate-Bank-SMS-v2.shortcut"
                   className={cn(buttonVariants({ size: 'sm' }), 'shrink-0')}
                 >
                   <Download className="h-4 w-4" /> Download Shortcut
