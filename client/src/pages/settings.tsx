@@ -6,6 +6,7 @@ import {
   Check,
   Copy,
   CreditCard,
+  Download,
   Inbox,
   KeyRound,
   Loader2,
@@ -26,7 +27,7 @@ import {
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Input, Textarea } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar } from '@/components/ui/avatar';
@@ -926,6 +927,23 @@ export default function SettingsPage() {
                 <code className="mt-2 block break-all rounded-lg bg-background/60 px-2.5 py-2 font-mono text-xs">
                   {smsEndpoint}
                 </code>
+              </div>
+
+              <div className="flex flex-col gap-3 rounded-xl border border-primary/40 bg-primary/[0.06] p-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-semibold">One-tap iPhone shortcut</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    Download the ready-made Shortcut instead of adding the actions by hand. Paste your
+                    token at the import prompt, then attach it to a Message automation.
+                  </p>
+                </div>
+                <a
+                  href="/shortcuts/splitmate-bank-sms.shortcut"
+                  download="SplitMate-Bank-SMS.shortcut"
+                  className={cn(buttonVariants({ size: 'sm' }), 'shrink-0')}
+                >
+                  <Download className="h-4 w-4" /> Download Shortcut
+                </a>
               </div>
 
               <SmsSetupGuide endpoint={smsEndpoint} />
